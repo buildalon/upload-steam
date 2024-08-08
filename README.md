@@ -22,9 +22,9 @@ This action also assumes some secrets to be set in your repository:
 ```yaml
 steps:
     # sets up the steamcmd command alias
-  - uses: RageAgainstThePixel/setup-steamcmd@v1
+  - uses: buildalon/setup-steamcmd@v1
     # uploads a build or workshop item to steam
-  - uses: RageAgainstThePixel/upload-steam@v1
+  - uses: buildalon/upload-steam@v1
     id: upload
     with:
       username: ${{ secrets.STEAM_USERNAME }}
