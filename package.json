@@ -1,0 +1,34 @@
+{
+  "name": "upload-steam",
+  "version": "1.0.0",
+  "description": "A GitHub Action for uploading an app build or workshop item to Steam.",
+  "author": "buildalon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buildalon/upload-steam.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/buildalon/upload-steam/issues"
+  },
+  "homepage": "https://github.com/buildalon/upload-steam",
+  "main": "dist/index.js",
+  "keywords": [
+    "steam",
+    "upload",
+    "build",
+    "workshop"
+  ],
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/exec": "^1.1.1",
+    "steam-totp": "^2.1.2"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.34.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm install && npm ci && ncc build src/index.js -o dist --source-map --license licenses.txt"
+  }
+}
