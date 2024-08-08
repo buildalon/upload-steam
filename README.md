@@ -1,5 +1,7 @@
 # Buildalon Upload to Steam
 
+[![Discord](https://img.shields.io/discord/939721153688264824.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/VM9cWJ9rjH)
+
 A GitHub Action for uploading an [app build](https://partner.steamgames.com/doc/sdk/uploading#4) or [workshop item](https://partner.steamgames.com/doc/features/workshop/implementation#SteamCmd) to Steam.
 
 ## How to use
