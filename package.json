@@ -1,6 +1,6 @@
 {
   "name": "upload-steam",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A GitHub Action for uploading an app build or workshop item to Steam.",
   "author": "buildalon",
   "repository": {
