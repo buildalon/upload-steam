@@ -23,14 +23,16 @@ async function Exec(args: string[]): Promise<string> {
     } catch (error) {
         const logFile = getErrorLogPath();
         core.debug(`Printing error log: ${logFile}`);
+        const fileHandle = await fs.promises.open(logFile, 'r');
         try {
-            await fs.promises.access(logFile);
             const log = await fs.promises.readFile(logFile, 'utf8');
             core.startGroup(logFile);
             core.info(log);
             core.endGroup();
         } catch (error) {
             // ignore
+        } finally {
+            fileHandle.close();
         }
         throw error;
     }

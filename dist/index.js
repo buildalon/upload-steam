@@ -26429,14 +26429,17 @@ async function Exec(args) {
     catch (error) {
         const logFile = getErrorLogPath();
         core.debug(`Printing error log: ${logFile}`);
+        const fileHandle = await fs.promises.open(logFile, 'r');
         try {
-            await fs.promises.access(logFile);
             const log = await fs.promises.readFile(logFile, 'utf8');
             core.startGroup(logFile);
             core.info(log);
             core.endGroup();
         }
         catch (error) {
+        }
+        finally {
+            fileHandle.close();
         }
         throw error;
     }
@@ -28500,8 +28503,12 @@ module.exports = parseParams
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
+"use strict";
+var exports = __webpack_exports__;
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __nccwpck_require__(2186);
 const upload = __nccwpck_require__(7296);
 const auth = __nccwpck_require__(3497);
