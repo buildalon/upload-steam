@@ -1,20 +1,20 @@
-const core = require('@actions/core');
-const fs = require('fs/promises');
-const path = require('path');
-const steamcmd = require('./steamcmd');
+import steamcmd = require('./steamcmd');
+import core = require('@actions/core');
+import path = require('path');
+import fs = require('fs');
 
 const STEAM_TEMP = process.env.STEAM_TEMP;
 const WORKSPACE = process.env.GITHUB_WORKSPACE;
 const BUILD_OUTPUT = path.join(STEAM_TEMP, 'buildoutput');
 
-async function Run() {
+async function Run(): Promise<void> {
     const args = await getCommandArgs();
     await steamcmd.Exec(args);
 }
 
-module.exports = { Run }
+export { Run }
 
-async function getCommandArgs() {
+async function getCommandArgs(): Promise<string[]> {
     let args = [];
     const username = core.getInput('username', { required: true });
     args.push('+login', username);
@@ -22,7 +22,7 @@ async function getCommandArgs() {
     let appBuildPath = core.getInput('app_build');
 
     if (appBuildPath) {
-        await fs.access(appBuildPath, fs.constants.R_OK);
+        await fs.promises.access(appBuildPath, fs.constants.R_OK);
         args.push('+run_app_build', `"${appBuildPath}"`, '+quit');
         return args;
     }
@@ -30,14 +30,14 @@ async function getCommandArgs() {
     let workshopItemPath = core.getInput('workshop_item');
 
     if (workshopItemPath) {
-        await fs.access(workshopItemPath, fs.constants.R_OK);
+        await fs.promises.access(workshopItemPath, fs.constants.R_OK);
         args.push('+workshop_build_item', workshopItemPath, '+quit');
         return args;
     }
 
     const appId = core.getInput('app_id', { required: true });
     const contentRoot = path.resolve(core.getInput('content_root') || WORKSPACE);
-    await fs.access(contentRoot, fs.constants.R_OK);
+    await fs.promises.access(contentRoot, fs.constants.R_OK);
     const description = core.getInput('description');
 
     const workshopItemId = core.getInput('workshop_item_id');
@@ -76,7 +76,7 @@ async function getCommandArgs() {
     return args;
 }
 
-async function generateWorkshopItemVdf(appId, workshopItemId, contentFolder, description) {
+async function generateWorkshopItemVdf(appId: string, workshopItemId: string, contentFolder: string, description: string): Promise<string> {
     await verify_temp_dir();
     const workshopItemPath = path.join(STEAM_TEMP, 'workshop_item.vdf');
     let workshopItem = `"workshopitem"\n{\n\t"appid" "${appId}"\n\t"publishedfileid" "${workshopItemId}"\n\t"contentfolder" "${contentFolder}"\n`;
@@ -85,12 +85,12 @@ async function generateWorkshopItemVdf(appId, workshopItemId, contentFolder, des
     }
     workshopItem += '}';
     core.info(workshopItem);
-    await fs.writeFile(workshopItemPath, workshopItem);
-    await fs.access(workshopItemPath, fs.constants.R_OK);
+    await fs.promises.writeFile(workshopItemPath, workshopItem);
+    await fs.promises.access(workshopItemPath, fs.constants.R_OK);
     return workshopItemPath;
 }
 
-async function generateBuildVdf(appId, contentRoot, description, set_live, depot_file_exclusions_list, install_scripts_list, depots_list) {
+async function generateBuildVdf(appId: string, contentRoot: string, description: string, set_live: string, depot_file_exclusions_list: string[], install_scripts_list: string[], depots_list: string[]): Promise<string> {
     await verify_temp_dir();
     const appBuildPath = path.join(STEAM_TEMP, 'app_build.vdf');
     let appBuild = `"AppBuild"\n{\n`;
@@ -143,15 +143,15 @@ async function generateBuildVdf(appId, contentRoot, description, set_live, depot
 
     appBuild += '}';
     core.info(appBuild);
-    await fs.writeFile(appBuildPath, appBuild);
-    await fs.access(appBuildPath, fs.constants.R_OK);
+    await fs.promises.writeFile(appBuildPath, appBuild);
+    await fs.promises.access(appBuildPath, fs.constants.R_OK);
     return appBuildPath;
 }
 
-async function verify_temp_dir() {
+async function verify_temp_dir(): Promise<void> {
     try {
-        await fs.access(BUILD_OUTPUT, fs.constants.R_OK);
+        await fs.promises.access(BUILD_OUTPUT, fs.constants.R_OK);
     } catch (error) {
-        await fs.mkdir(BUILD_OUTPUT);
+        await fs.promises.mkdir(BUILD_OUTPUT);
     }
 }
