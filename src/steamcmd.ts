@@ -1,12 +1,12 @@
-const exec = require('@actions/exec');
-const core = require('@actions/core');
-const fs = require('fs/promises');
-const path = require('path');
+import core = require('@actions/core');
+import exec = require('@actions/exec');
+import path = require('path');
+import fs = require('fs');
 
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
 
-async function Exec(args) {
+async function Exec(args: string[]): Promise<string> {
     let output = '';
     try {
         await exec.exec('steamcmd', args,
@@ -24,22 +24,28 @@ async function Exec(args) {
         const logFile = getErrorLogPath();
         core.debug(`Printing error log: ${logFile}`);
         try {
-            await fs.access(logFile);
-            const log = await fs.readFile(logFile, 'utf8');
-            core.startGroup(logFile);
-            core.info(log);
-            core.endGroup();
+            const fileHandle = await fs.promises.open(logFile, 'r');
+            try {
+                const log = await fs.promises.readFile(logFile, 'utf8');
+                core.startGroup(logFile);
+                core.info(log);
+                core.endGroup();
+            } catch (error) {
+                // Ignore error
+            } finally {
+                fileHandle.close();
+            }
         } catch (error) {
-            // ignore
+            // Ignore error
         }
         throw error;
     }
     return output;
 }
 
-module.exports = { Exec }
+export { Exec }
 
-function getErrorLogPath() {
+function getErrorLogPath(): string {
     let root = STEAM_DIR;
     if (process.platform === 'win32') { root = STEAM_CMD; }
     return path.join(root, 'logs', 'stderr.txt');

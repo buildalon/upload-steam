@@ -26327,31 +26327,30 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 4915:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ 3497:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(2186);
-const fs = __nccwpck_require__(3292);
-const path = __nccwpck_require__(1017);
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Login = Login;
+exports.IsLoggedIn = IsLoggedIn;
 const steamTotp = __nccwpck_require__(3627);
-const steamcmd = __nccwpck_require__(404);
-
+const steamcmd = __nccwpck_require__(525);
+const core = __nccwpck_require__(2186);
+const path = __nccwpck_require__(1017);
+const fs = __nccwpck_require__(7147);
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
-
 async function Login() {
     const args = await getLoginArgs();
     await steamcmd.Exec(args);
 }
-
 async function IsLoggedIn() {
     const args = ['+info', '+quit'];
     const output = await steamcmd.Exec(args);
     return !output.includes('Logon state: Logged Off');
 }
-
-module.exports = { Login, IsLoggedIn }
-
 async function getLoginArgs() {
     let args = [];
     const username = core.getInput('username', { required: true });
@@ -26363,13 +26362,14 @@ async function getLoginArgs() {
             const ssfnName = core.getInput('ssfn_name', { required: true });
             const ssfnPath = getSSFNPath(ssfnName);
             core.debug(`Writing ${ssfnPath}...`);
-            await fs.writeFile(ssfnPath, Buffer.from(ssfn, 'base64'));
+            await fs.promises.writeFile(ssfnPath, Buffer.from(ssfn, 'base64'));
         }
         const configPath = getConfigPath();
         core.debug(`Writing ${configPath}...`);
-        await fs.writeFile(configPath, Buffer.from(config, 'base64'));
-        await fs.access(configPath, fs.constants.R_OK);
-    } else {
+        await fs.promises.writeFile(configPath, Buffer.from(config, 'base64'));
+        await fs.promises.access(configPath, fs.constants.R_OK);
+    }
+    else {
         const password = core.getInput('password', { required: true });
         let code = core.getInput('code');
         if (!code) {
@@ -26381,154 +26381,149 @@ async function getLoginArgs() {
     args.push('+info', '+quit');
     return args;
 }
-
 function getConfigPath() {
     let root = STEAM_DIR;
-    if (process.platform === 'win32') { root = STEAM_CMD; }
+    if (process.platform === 'win32') {
+        root = STEAM_CMD;
+    }
     return path.join(root, 'config', 'config.vdf');
 }
-
 function getSSFNPath(ssfnName) {
     let root = STEAM_DIR;
-    if (process.platform === 'win32') { root = STEAM_CMD; }
+    if (process.platform === 'win32') {
+        root = STEAM_CMD;
+    }
     return path.join(root, ssfnName);
 }
 
+
 /***/ }),
 
-/***/ 404:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ 525:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-const exec = __nccwpck_require__(1514);
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Exec = Exec;
 const core = __nccwpck_require__(2186);
-const fs = __nccwpck_require__(3292);
+const exec = __nccwpck_require__(1514);
 const path = __nccwpck_require__(1017);
-
+const fs = __nccwpck_require__(7147);
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
-
 async function Exec(args) {
     let output = '';
     try {
-        await exec.exec('steamcmd', args,
-            {
-                listeners: {
-                    stdout: (data) => {
-                        output += data.toString();
-                    },
-                    stderr: (data) => {
-                        output += data.toString();
-                    }
+        await exec.exec('steamcmd', args, {
+            listeners: {
+                stdout: (data) => {
+                    output += data.toString();
+                },
+                stderr: (data) => {
+                    output += data.toString();
                 }
-            });
-    } catch (error) {
+            }
+        });
+    }
+    catch (error) {
         const logFile = getErrorLogPath();
         core.debug(`Printing error log: ${logFile}`);
         try {
-            await fs.access(logFile);
-            const log = await fs.readFile(logFile, 'utf8');
-            core.startGroup(logFile);
-            core.info(log);
-            core.endGroup();
-        } catch (error) {
-            // ignore
+            const fileHandle = await fs.promises.open(logFile, 'r');
+            try {
+                const log = await fs.promises.readFile(logFile, 'utf8');
+                core.startGroup(logFile);
+                core.info(log);
+                core.endGroup();
+            }
+            catch (error) {
+            }
+            finally {
+                fileHandle.close();
+            }
+        }
+        catch (error) {
         }
         throw error;
     }
     return output;
 }
-
-module.exports = { Exec }
-
 function getErrorLogPath() {
     let root = STEAM_DIR;
-    if (process.platform === 'win32') { root = STEAM_CMD; }
+    if (process.platform === 'win32') {
+        root = STEAM_CMD;
+    }
     return path.join(root, 'logs', 'stderr.txt');
 }
 
+
 /***/ }),
 
-/***/ 9265:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ 7296:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Run = Run;
+const steamcmd = __nccwpck_require__(525);
 const core = __nccwpck_require__(2186);
-const fs = __nccwpck_require__(3292);
 const path = __nccwpck_require__(1017);
-const steamcmd = __nccwpck_require__(404);
-
+const fs = __nccwpck_require__(7147);
 const STEAM_TEMP = process.env.STEAM_TEMP;
 const WORKSPACE = process.env.GITHUB_WORKSPACE;
 const BUILD_OUTPUT = path.join(STEAM_TEMP, 'buildoutput');
-
 async function Run() {
     const args = await getCommandArgs();
     await steamcmd.Exec(args);
 }
-
-module.exports = { Run }
-
 async function getCommandArgs() {
     let args = [];
     const username = core.getInput('username', { required: true });
     args.push('+login', username);
-
     let appBuildPath = core.getInput('app_build');
-
     if (appBuildPath) {
-        await fs.access(appBuildPath, fs.constants.R_OK);
+        await fs.promises.access(appBuildPath, fs.constants.R_OK);
         args.push('+run_app_build', `"${appBuildPath}"`, '+quit');
         return args;
     }
-
     let workshopItemPath = core.getInput('workshop_item');
-
     if (workshopItemPath) {
-        await fs.access(workshopItemPath, fs.constants.R_OK);
+        await fs.promises.access(workshopItemPath, fs.constants.R_OK);
         args.push('+workshop_build_item', workshopItemPath, '+quit');
         return args;
     }
-
     const appId = core.getInput('app_id', { required: true });
     const contentRoot = path.resolve(core.getInput('content_root') || WORKSPACE);
-    await fs.access(contentRoot, fs.constants.R_OK);
+    await fs.promises.access(contentRoot, fs.constants.R_OK);
     const description = core.getInput('description');
-
     const workshopItemId = core.getInput('workshop_item_id');
-
     if (workshopItemId) {
         workshopItemPath = await generateWorkshopItemVdf(appId, workshopItemId, contentRoot, description);
         args.push('+workshop_build_item', workshopItemPath, '+quit');
         return args;
     }
-
     const set_live = core.getInput('set_live');
-
     const depot_file_exclusions = core.getInput('depot_file_exclusions');
     let depot_file_exclusions_list = undefined;
-
     if (depot_file_exclusions) {
         depot_file_exclusions_list = depot_file_exclusions.split('\n');
     }
-
     const install_scripts = core.getInput('install_scripts');
     let install_scripts_list = undefined;
-
     if (install_scripts) {
         install_scripts_list = install_scripts.split('\n');
     }
-
     const depots = core.getInput('depots');
     let depots_list = undefined;
-
     if (depots) {
         depots_list = depots.split('\n');
     }
-
     appBuildPath = await generateBuildVdf(appId, contentRoot, description, set_live, depot_file_exclusions_list, install_scripts_list, depots_list);
     args.push('+run_app_build', appBuildPath, '+quit');
     return args;
 }
-
 async function generateWorkshopItemVdf(appId, workshopItemId, contentFolder, description) {
     await verify_temp_dir();
     const workshopItemPath = path.join(STEAM_TEMP, 'workshop_item.vdf');
@@ -26538,11 +26533,10 @@ async function generateWorkshopItemVdf(appId, workshopItemId, contentFolder, des
     }
     workshopItem += '}';
     core.info(workshopItem);
-    await fs.writeFile(workshopItemPath, workshopItem);
-    await fs.access(workshopItemPath, fs.constants.R_OK);
+    await fs.promises.writeFile(workshopItemPath, workshopItem);
+    await fs.promises.access(workshopItemPath, fs.constants.R_OK);
     return workshopItemPath;
 }
-
 async function generateBuildVdf(appId, contentRoot, description, set_live, depot_file_exclusions_list, install_scripts_list, depots_list) {
     await verify_temp_dir();
     const appBuildPath = path.join(STEAM_TEMP, 'app_build.vdf');
@@ -26564,7 +26558,8 @@ async function generateBuildVdf(appId, contentRoot, description, set_live, depot
             depotIndex++;
         });
         appBuild += `\t}\n`;
-    } else {
+    }
+    else {
         const depotId = parseInt(appId) + 1;
         appBuild += `\t"Depots"\n\t{\n`;
         appBuild += `\t\t"${depotId}"\n`;
@@ -26577,35 +26572,31 @@ async function generateBuildVdf(appId, contentRoot, description, set_live, depot
         appBuild += `\t\t\t"FileExclusion" "*.pdb" // don't include symbols\n`;
         appBuild += `\t\t\t"FileExclusion" "**/*_BurstDebugInformation_DoNotShip*" // don't include unity build folders\n`;
         appBuild += `\t\t\t"FileExclusion" "**/*_BackUpThisFolder_ButDontShipItWithYourGame*" // don't include unity build folders\n`;
-
         if (depot_file_exclusions_list) {
             depot_file_exclusions_list.forEach(exclusion => {
                 appBuild += `\t\t\t"FileExclusion" "${exclusion}"\n`;
             });
         }
-
         if (install_scripts_list) {
             install_scripts_list.forEach(script => {
                 appBuild += `\t\t\t"InstallScript" "${script}"\n`;
             });
         }
-
         appBuild += `\t\t}\n`;
         appBuild += `\t}\n`;
     }
-
     appBuild += '}';
     core.info(appBuild);
-    await fs.writeFile(appBuildPath, appBuild);
-    await fs.access(appBuildPath, fs.constants.R_OK);
+    await fs.promises.writeFile(appBuildPath, appBuild);
+    await fs.promises.access(appBuildPath, fs.constants.R_OK);
     return appBuildPath;
 }
-
 async function verify_temp_dir() {
     try {
-        await fs.access(BUILD_OUTPUT, fs.constants.R_OK);
-    } catch (error) {
-        await fs.mkdir(BUILD_OUTPUT);
+        await fs.promises.access(BUILD_OUTPUT, fs.constants.R_OK);
+    }
+    catch (error) {
+        await fs.promises.mkdir(BUILD_OUTPUT);
     }
 }
 
@@ -26689,14 +26680,6 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
-
-/***/ }),
-
-/***/ 3292:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");
 
 /***/ }),
 
@@ -28524,16 +28507,18 @@ module.exports = parseParams
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
-const core = __nccwpck_require__(2186);
-const upload = __nccwpck_require__(9265);
-const auth = __nccwpck_require__(4915);
+"use strict";
+var exports = __webpack_exports__;
 
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __nccwpck_require__(2186);
+const upload = __nccwpck_require__(7296);
+const auth = __nccwpck_require__(3497);
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
 const STEAM_TEMP = process.env.STEAM_TEMP;
-
 const main = async () => {
     try {
         if (!STEAM_DIR) {
@@ -28550,11 +28535,11 @@ const main = async () => {
             await auth.Login();
         }
         await upload.Run();
-    } catch (error) {
+    }
+    catch (error) {
         core.setFailed(error);
     }
-}
-
+};
 main();
 
 })();

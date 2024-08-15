@@ -1,6 +1,6 @@
-const core = require('@actions/core');
-const upload = require('./upload');
-const auth = require('./auth');
+import core = require('@actions/core');
+import upload = require('./upload');
+import auth = require('./auth');
 
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
