@@ -26485,7 +26485,7 @@ async function getCommandArgs() {
     let appBuildPath = core.getInput('app_build');
     if (appBuildPath) {
         await fs.promises.access(appBuildPath, fs.constants.R_OK);
-        args.push('+run_app_build', `"${appBuildPath}"`, '+quit');
+        args.push('+run_app_build', appBuildPath, '+quit');
         return args;
     }
     let workshopItemPath = core.getInput('workshop_item');
