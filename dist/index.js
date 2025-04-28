@@ -26046,8 +26046,8 @@ async function generateBuildVdf(appId, contentRoot, description, set_live, depot
     if (description && description !== '') {
         appBuild += `\t"Desc" "${description}"\n`;
     }
-    if (set_live && set_live !== '') {
-        appBuild += `\t"SetLive" "${set_live}"\n`;
+    if (set_live && set_live !== '' && set_live !== 'RC') {
+        appBuild += `\t"SetLive" "${set_live.toLowerCase()}"\n`;
     }
     if (depots_list) {
         appBuild += `\t"Depots"\n\t{\n`;
@@ -26060,6 +26060,7 @@ async function generateBuildVdf(appId, contentRoot, description, set_live, depot
     }
     else {
         const depotId = parseInt(appId) + 1;
+        const platformDirectorySeparator = process.platform === 'win32' ? '\\' : '/';
         appBuild += `\t"Depots"\n\t{\n`;
         appBuild += `\t\t"${depotId}"\n`;
         appBuild += `\t\t{\n`;
@@ -26069,8 +26070,8 @@ async function generateBuildVdf(appId, contentRoot, description, set_live, depot
         appBuild += `\t\t\t\t"recursive" "1" // include all subfolders\n`;
         appBuild += `\t\t\t}\n`;
         appBuild += `\t\t\t"FileExclusion" "*.pdb" // don't include symbols\n`;
-        appBuild += `\t\t\t"FileExclusion" "*/*_BurstDebugInformation_DoNotShip*" // don't include unity build folders\n`;
-        appBuild += `\t\t\t"FileExclusion" "*/*_BackUpThisFolder_ButDontShipItWithYourGame*" // don't include unity build folders\n`;
+        appBuild += `\t\t\t"FileExclusion" "*${platformDirectorySeparator}*_BurstDebugInformation_DoNotShip*" // don't include unity build folders\n`;
+        appBuild += `\t\t\t"FileExclusion" "*${platformDirectorySeparator}*_BackUpThisFolder_ButDontShipItWithYourGame*" // don't include unity build folders\n`;
         if (depot_file_exclusions_list) {
             depot_file_exclusions_list.forEach(exclusion => {
                 appBuild += `\t\t\t"FileExclusion" "${exclusion}"\n`;
