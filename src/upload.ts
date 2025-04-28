@@ -107,8 +107,8 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
         appBuild += `\t\t\t\t"recursive" "1" // include all subfolders\n`;
         appBuild += `\t\t\t}\n`;
         appBuild += `\t\t\t"FileExclusion" "*.pdb" // don't include symbols\n`;
-        appBuild += `\t\t\t"FileExclusion" "**/*_BurstDebugInformation_DoNotShip*" // don't include unity build folders\n`;
-        appBuild += `\t\t\t"FileExclusion" "**/*_BackUpThisFolder_ButDontShipItWithYourGame*" // don't include unity build folders\n`;
+        appBuild += `\t\t\t"FileExclusion" "*/*_BurstDebugInformation_DoNotShip*" // don't include unity build folders\n`;
+        appBuild += `\t\t\t"FileExclusion" "*/*_BackUpThisFolder_ButDontShipItWithYourGame*" // don't include unity build folders\n`;
         if (depot_file_exclusions_list) {
             depot_file_exclusions_list.forEach(exclusion => {
                 appBuild += `\t\t\t"FileExclusion" "${exclusion}"\n`;
