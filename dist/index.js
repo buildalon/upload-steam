@@ -25868,7 +25868,7 @@ async function getLoginArgs() {
     else {
         const password = core.getInput('password', { required: true });
         let code = core.getInput('code');
-        if (!code) {
+        if (code && code.length > 0) {
             const shared_secret = core.getInput('shared_secret', { required: true });
             code = steamTotp.generateAuthCode(shared_secret);
             args.push(password, '+set_steam_guard_code', code);
