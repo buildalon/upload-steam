@@ -85,8 +85,12 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
     if (description && description !== '') {
         appBuild += `\t"Desc" "${description}"\n`;
     }
-    if (set_live && set_live !== '' && set_live !== 'RC') {
-        appBuild += `\t"SetLive" "${set_live.toLowerCase()}"\n`;
+    if (set_live && set_live !== '') {
+        set_live = set_live.toLowerCase();
+        if (set_live === 'rc') {
+            set_live = '_rc_';
+        }
+        appBuild += `\t"SetLive" "${set_live}"\n`;
     }
     if (depots_list) {
         appBuild += `\t"Depots"\n\t{\n`;
