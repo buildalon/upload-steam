@@ -7,12 +7,10 @@ const STEAM_TEMP = process.env.STEAM_TEMP;
 const WORKSPACE = process.env.GITHUB_WORKSPACE;
 const BUILD_OUTPUT = path.join(STEAM_TEMP, 'buildoutput');
 
-async function Run(): Promise<void> {
+export async function Run(): Promise<void> {
     const args = await getCommandArgs();
     await steamcmd.Exec(args);
 }
-
-export { Run }
 
 async function getCommandArgs(): Promise<string[]> {
     let args = [];

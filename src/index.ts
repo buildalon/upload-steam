@@ -2,19 +2,15 @@ import core = require('@actions/core');
 import upload = require('./upload');
 import auth = require('./auth');
 
-const STEAM_DIR = process.env.STEAM_DIR;
-const STEAM_CMD = process.env.STEAM_CMD;
-const STEAM_TEMP = process.env.STEAM_TEMP;
-
 const main = async () => {
     try {
-        if (!STEAM_DIR) {
+        if (!process.env.STEAM_DIR) {
             throw new Error('STEAM_DIR is not defined.');
         }
-        if (!STEAM_CMD) {
+        if (!process.env.STEAM_CMD) {
             throw new Error('STEAM_CMD is not defined.');
         }
-        if (!STEAM_TEMP) {
+        if (!process.env.STEAM_TEMP) {
             throw new Error('STEAM_TEMP is not defined.');
         }
         const isLoggedIn = await auth.IsLoggedIn();

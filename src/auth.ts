@@ -7,18 +7,23 @@ import fs = require('fs');
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
 
-async function Login(): Promise<void> {
+export async function Login(): Promise<void> {
     const args = await getLoginArgs();
-    await steamcmd.Exec(args);
+    const output = await steamcmd.Exec(args);
+    if (output.includes('Logon state: Logged In')) {
+        core.info('Logged in successfully!');
+    } else if (output.includes('Logon state: Logged Off')) {
+        core.setFailed('Login failed!');
+    } else {
+        core.setFailed('Login failed! Unknown error.');
+    }
 }
 
-async function IsLoggedIn(): Promise<boolean> {
+export async function IsLoggedIn(): Promise<boolean> {
     const args = ['+info', '+quit'];
     const output = await steamcmd.Exec(args);
     return !output.includes('Logon state: Logged Off');
 }
-
-export { Login, IsLoggedIn }
 
 async function getLoginArgs(): Promise<string[]> {
     let args = [];
@@ -40,8 +45,11 @@ async function getLoginArgs(): Promise<string[]> {
     } else {
         const password = core.getInput('password', { required: true });
         let code = core.getInput('code');
+        const shared_secret = core.getInput('shared_secret');
         if (code && code.length > 0) {
-            const shared_secret = core.getInput('shared_secret', { required: true });
+            args.push(password, '+set_steam_guard_code', code);
+        }
+        else if (shared_secret && shared_secret.length > 0) {
             code = steamTotp.generateAuthCode(shared_secret);
             args.push(password, '+set_steam_guard_code', code);
         } else {
@@ -53,13 +61,11 @@ async function getLoginArgs(): Promise<string[]> {
 }
 
 function getConfigPath(): string {
-    let root = STEAM_DIR;
-    if (process.platform === 'win32') { root = STEAM_CMD; }
+    const root = process.platform === 'win32' ? STEAM_CMD : STEAM_DIR;
     return path.join(root, 'config', 'config.vdf');
 }
 
 function getSSFNPath(ssfnName: string): string {
-    let root = STEAM_DIR;
-    if (process.platform === 'win32') { root = STEAM_CMD; }
+    const root = process.platform === 'win32' ? STEAM_CMD : STEAM_DIR;
     return path.join(root, ssfnName);
 }

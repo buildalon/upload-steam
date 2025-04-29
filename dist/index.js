@@ -25840,7 +25840,16 @@ const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
 async function Login() {
     const args = await getLoginArgs();
-    await steamcmd.Exec(args);
+    const output = await steamcmd.Exec(args);
+    if (output.includes('Logon state: Logged In')) {
+        core.info('Logged in successfully!');
+    }
+    else if (output.includes('Logon state: Logged Off')) {
+        core.setFailed('Login failed!');
+    }
+    else {
+        core.setFailed('Login failed! Unknown error.');
+    }
 }
 async function IsLoggedIn() {
     const args = ['+info', '+quit'];
@@ -25868,8 +25877,11 @@ async function getLoginArgs() {
     else {
         const password = core.getInput('password', { required: true });
         let code = core.getInput('code');
+        const shared_secret = core.getInput('shared_secret');
         if (code && code.length > 0) {
-            const shared_secret = core.getInput('shared_secret', { required: true });
+            args.push(password, '+set_steam_guard_code', code);
+        }
+        else if (shared_secret && shared_secret.length > 0) {
             code = steamTotp.generateAuthCode(shared_secret);
             args.push(password, '+set_steam_guard_code', code);
         }
@@ -25881,17 +25893,11 @@ async function getLoginArgs() {
     return args;
 }
 function getConfigPath() {
-    let root = STEAM_DIR;
-    if (process.platform === 'win32') {
-        root = STEAM_CMD;
-    }
+    const root = process.platform === 'win32' ? STEAM_CMD : STEAM_DIR;
     return path.join(root, 'config', 'config.vdf');
 }
 function getSSFNPath(ssfnName) {
-    let root = STEAM_DIR;
-    if (process.platform === 'win32') {
-        root = STEAM_CMD;
-    }
+    const root = process.platform === 'win32' ? STEAM_CMD : STEAM_DIR;
     return path.join(root, ssfnName);
 }
 
@@ -28028,18 +28034,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __nccwpck_require__(2186);
 const upload = __nccwpck_require__(7296);
 const auth = __nccwpck_require__(3497);
-const STEAM_DIR = process.env.STEAM_DIR;
-const STEAM_CMD = process.env.STEAM_CMD;
-const STEAM_TEMP = process.env.STEAM_TEMP;
 const main = async () => {
     try {
-        if (!STEAM_DIR) {
+        if (!process.env.STEAM_DIR) {
             throw new Error('STEAM_DIR is not defined.');
         }
-        if (!STEAM_CMD) {
+        if (!process.env.STEAM_CMD) {
             throw new Error('STEAM_CMD is not defined.');
         }
-        if (!STEAM_TEMP) {
+        if (!process.env.STEAM_TEMP) {
             throw new Error('STEAM_TEMP is not defined.');
         }
         const isLoggedIn = await auth.IsLoggedIn();
