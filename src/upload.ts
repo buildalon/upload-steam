@@ -1,5 +1,6 @@
 import steamcmd = require('./steamcmd');
 import core = require('@actions/core');
+import glob = require('@actions/glob');
 import path = require('path');
 import fs = require('fs');
 
@@ -100,7 +101,6 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
         appBuild += `\t}\n`;
     } else {
         const depotId = parseInt(appId) + 1;
-        const platformDirectorySeparator = process.platform === 'win32' ? '\\' : '/';
         appBuild += `\t"Depots"\n\t{\n`;
         appBuild += `\t\t"${depotId}"\n`;
         appBuild += `\t\t{\n`;
@@ -109,13 +109,26 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
         appBuild += `\t\t\t\t"DepotPath" "." // mapped into the root of the depot\n`;
         appBuild += `\t\t\t\t"recursive" "1" // include all subfolders\n`;
         appBuild += `\t\t\t}\n`;
-        appBuild += `\t\t\t"FileExclusion" "*.pdb" // don't include symbols\n`;
-        appBuild += `\t\t\t"FileExclusion" "*${platformDirectorySeparator}*_BurstDebugInformation_DoNotShip*" // don't include unity build folders\n`;
-        appBuild += `\t\t\t"FileExclusion" "*${platformDirectorySeparator}*_BackUpThisFolder_ButDontShipItWithYourGame*" // don't include unity build folders\n`;
+        const fileExclusions: string[] = ['*.pdb'];
+        // *_BurstDebugInformation_DoNotShip*
+        // *_BackUpThisFolder_ButDontShipItWithYourGame*
+        const burstDebugDir = path.join(contentRoot, '*_BurstDebugInformation_DoNotShip*');
+        if (burstDebugDir && !fileExclusions.includes(burstDebugDir)) {
+            fileExclusions.push(burstDebugDir);
+        }
+        const backupDir = path.join(contentRoot, '*_BackUpThisFolder_ButDontShipItWithYourGame*');
+        if (backupDir && !fileExclusions.includes(backupDir)) {
+            fileExclusions.push(backupDir);
+        }
         if (depot_file_exclusions_list) {
-            depot_file_exclusions_list.forEach(exclusion => {
-                appBuild += `\t\t\t"FileExclusion" "${exclusion}"\n`;
-            });
+            for (const exclusion of depot_file_exclusions_list) {
+                if (!fileExclusions.includes(exclusion)) {
+                    fileExclusions.push(exclusion);
+                }
+            }
+        }
+        for (const exclusion of fileExclusions) {
+            appBuild += `\t\t\t"FileExclusion" "${exclusion}"\n`;
         }
         if (install_scripts_list) {
             install_scripts_list.forEach(script => {
@@ -138,4 +151,23 @@ async function verify_temp_dir(): Promise<void> {
     } catch (error) {
         await fs.promises.mkdir(BUILD_OUTPUT);
     }
+}
+
+async function getDirectoryFromGlob(globPattern: string): Promise<string> {
+    const globber = await glob.create(globPattern, { matchDirectories: true });
+    const matches = await globber.glob();
+    if (matches.length === 0) {
+        core.info(`No matches found for glob pattern: ${globPattern}`);
+        return null;
+    }
+    // if multiple matches are found, return the first one that is a directory
+    for (const match of matches) {
+        const stats = await fs.promises.stat(match);
+        if (stats.isDirectory()) {
+            core.info(`Found directory: ${match}`);
+            return match;
+        }
+    }
+    core.info(`No directories found for glob pattern: ${globPattern}`);
+    return null;
 }
