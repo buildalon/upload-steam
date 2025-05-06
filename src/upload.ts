@@ -112,11 +112,11 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
         const fileExclusions: string[] = ['*.pdb'];
         // *_BurstDebugInformation_DoNotShip*
         // *_BackUpThisFolder_ButDontShipItWithYourGame*
-        const burstDebugDir = path.join(contentRoot, '*_BurstDebugInformation_DoNotShip*');
+        const burstDebugDir = await getDirectoryFromGlob(path.join(contentRoot, '*_BurstDebugInformation_DoNotShip*'));
         if (burstDebugDir && !fileExclusions.includes(burstDebugDir)) {
             fileExclusions.push(burstDebugDir);
         }
-        const backupDir = path.join(contentRoot, '*_BackUpThisFolder_ButDontShipItWithYourGame*');
+        const backupDir = await getDirectoryFromGlob(path.join(contentRoot, '*_BackUpThisFolder_ButDontShipItWithYourGame*'));
         if (backupDir && !fileExclusions.includes(backupDir)) {
             fileExclusions.push(backupDir);
         }
