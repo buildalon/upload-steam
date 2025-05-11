@@ -1,5 +1,5 @@
 import core = require('@actions/core');
-import exec = require('@actions/exec');
+import { exec } from '@actions/exec';
 import path = require('path');
 import fs = require('fs');
 
@@ -9,7 +9,7 @@ const STEAM_CMD = process.env.STEAM_CMD;
 export async function SteamCMD(args: string[]): Promise<string> {
     let output = '';
     try {
-        await exec.exec('steamcmd', args,
+        await exec('steamcmd', args,
             {
                 listeners: {
                     stdout: (data) => {

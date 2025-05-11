@@ -28316,8 +28316,8 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Login = Login;
 exports.IsLoggedIn = IsLoggedIn;
-const core = __nccwpck_require__(2186);
 const steamcmd_1 = __nccwpck_require__(525);
+const core = __nccwpck_require__(2186);
 const steamTotp = __nccwpck_require__(3627);
 const path = __nccwpck_require__(1017);
 const fs = __nccwpck_require__(7147);
@@ -28397,7 +28397,7 @@ function getSSFNPath(ssfnName) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SteamCMD = SteamCMD;
 const core = __nccwpck_require__(2186);
-const exec = __nccwpck_require__(1514);
+const exec_1 = __nccwpck_require__(1514);
 const path = __nccwpck_require__(1017);
 const fs = __nccwpck_require__(7147);
 const STEAM_DIR = process.env.STEAM_DIR;
@@ -28405,7 +28405,7 @@ const STEAM_CMD = process.env.STEAM_CMD;
 async function SteamCMD(args) {
     let output = '';
     try {
-        await exec.exec('steamcmd', args, {
+        await (0, exec_1.exec)('steamcmd', args, {
             listeners: {
                 stdout: (data) => {
                     output += data.toString();

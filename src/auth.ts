@@ -1,5 +1,5 @@
-import core = require('@actions/core');
 import { SteamCMD } from './steamcmd';
+import core = require('@actions/core');
 import steamTotp = require('steam-totp');
 import path = require('path');
 import fs = require('fs');
