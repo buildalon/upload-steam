@@ -10,7 +10,7 @@ const STEAM_CMD = process.env.STEAM_CMD;
 export async function Login(): Promise<void> {
     const args = await getLoginArgs();
     const output = await SteamCMD(args);
-    if (output.includes('Logon state: Logged In')) {
+    if (output.includes('Logon state: Logged On')) {
         core.info('Logged in successfully!');
     } else if (output.includes('Logon state: Logged Off')) {
         core.setFailed('Login failed!');

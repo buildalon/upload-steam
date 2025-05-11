@@ -28326,7 +28326,7 @@ const STEAM_CMD = process.env.STEAM_CMD;
 async function Login() {
     const args = await getLoginArgs();
     const output = await (0, steamcmd_1.SteamCMD)(args);
-    if (output.includes('Logon state: Logged In')) {
+    if (output.includes('Logon state: Logged On')) {
         core.info('Logged in successfully!');
     }
     else if (output.includes('Logon state: Logged Off')) {
@@ -28405,7 +28405,7 @@ const STEAM_CMD = process.env.STEAM_CMD;
 async function SteamCMD(args) {
     let output = '';
     try {
-        await (0, exec_1.exec)('steamcmd', args, {
+        const exitCode = await (0, exec_1.exec)('steamcmd', args, {
             listeners: {
                 stdout: (data) => {
                     output += data.toString();
@@ -28413,8 +28413,12 @@ async function SteamCMD(args) {
                 stderr: (data) => {
                     output += data.toString();
                 }
-            }
+            },
+            ignoreReturnCode: true,
         });
+        if (exitCode !== 0) {
+            core.setFailed(`steamcmd failed with exit code ${exitCode}`);
+        }
     }
     catch (error) {
         const logFile = getErrorLogPath();
