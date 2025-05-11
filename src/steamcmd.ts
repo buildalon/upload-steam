@@ -6,7 +6,7 @@ import fs = require('fs');
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
 
-async function Exec(args: string[]): Promise<string> {
+export async function SteamCMD(args: string[]): Promise<string> {
     let output = '';
     try {
         await exec.exec('steamcmd', args,
@@ -42,8 +42,6 @@ async function Exec(args: string[]): Promise<string> {
     }
     return output;
 }
-
-export { Exec }
 
 function getErrorLogPath(): string {
     let root = STEAM_DIR;

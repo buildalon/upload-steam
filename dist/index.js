@@ -28316,16 +28316,16 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Login = Login;
 exports.IsLoggedIn = IsLoggedIn;
-const steamTotp = __nccwpck_require__(3627);
-const steamcmd = __nccwpck_require__(525);
 const core = __nccwpck_require__(2186);
+const steamcmd_1 = __nccwpck_require__(525);
+const steamTotp = __nccwpck_require__(3627);
 const path = __nccwpck_require__(1017);
 const fs = __nccwpck_require__(7147);
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
 async function Login() {
     const args = await getLoginArgs();
-    const output = await steamcmd.Exec(args);
+    const output = await (0, steamcmd_1.SteamCMD)(args);
     if (output.includes('Logon state: Logged In')) {
         core.info('Logged in successfully!');
     }
@@ -28337,8 +28337,8 @@ async function Login() {
     }
 }
 async function IsLoggedIn() {
-    const args = ['+info', '+quit'];
-    const output = await steamcmd.Exec(args);
+    const username = core.getInput('username', { required: true });
+    const output = await (0, steamcmd_1.SteamCMD)(['+info', '-login', username, '+quit']);
     return !output.includes('Logon state: Logged Off');
 }
 async function getLoginArgs() {
@@ -28395,14 +28395,14 @@ function getSSFNPath(ssfnName) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Exec = Exec;
+exports.SteamCMD = SteamCMD;
 const core = __nccwpck_require__(2186);
 const exec = __nccwpck_require__(1514);
 const path = __nccwpck_require__(1017);
 const fs = __nccwpck_require__(7147);
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
-async function Exec(args) {
+async function SteamCMD(args) {
     let output = '';
     try {
         await exec.exec('steamcmd', args, {
@@ -28457,7 +28457,7 @@ function getErrorLogPath() {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Run = Run;
-const steamcmd = __nccwpck_require__(525);
+const steamcmd_1 = __nccwpck_require__(525);
 const core = __nccwpck_require__(2186);
 const glob = __nccwpck_require__(8090);
 const path = __nccwpck_require__(1017);
@@ -28467,7 +28467,7 @@ const WORKSPACE = process.env.GITHUB_WORKSPACE;
 const BUILD_OUTPUT = path.join(STEAM_TEMP, 'buildoutput');
 async function Run() {
     const args = await getCommandArgs();
-    await steamcmd.Exec(args);
+    await (0, steamcmd_1.SteamCMD)(args);
 }
 async function getCommandArgs() {
     let args = [];

@@ -1,4 +1,4 @@
-import steamcmd = require('./steamcmd');
+import { SteamCMD } from './steamcmd';
 import core = require('@actions/core');
 import glob = require('@actions/glob');
 import path = require('path');
@@ -10,7 +10,7 @@ const BUILD_OUTPUT = path.join(STEAM_TEMP, 'buildoutput');
 
 export async function Run(): Promise<void> {
     const args = await getCommandArgs();
-    await steamcmd.Exec(args);
+    await SteamCMD(args);
 }
 
 async function getCommandArgs(): Promise<string[]> {

@@ -1,6 +1,6 @@
-import steamTotp = require('steam-totp');
-import steamcmd = require('./steamcmd');
 import core = require('@actions/core');
+import { SteamCMD } from './steamcmd';
+import steamTotp = require('steam-totp');
 import path = require('path');
 import fs = require('fs');
 
@@ -9,7 +9,7 @@ const STEAM_CMD = process.env.STEAM_CMD;
 
 export async function Login(): Promise<void> {
     const args = await getLoginArgs();
-    const output = await steamcmd.Exec(args);
+    const output = await SteamCMD(args);
     if (output.includes('Logon state: Logged In')) {
         core.info('Logged in successfully!');
     } else if (output.includes('Logon state: Logged Off')) {
@@ -20,8 +20,8 @@ export async function Login(): Promise<void> {
 }
 
 export async function IsLoggedIn(): Promise<boolean> {
-    const args = ['+info', '+quit'];
-    const output = await steamcmd.Exec(args);
+    const username = core.getInput('username', { required: true });
+    const output = await SteamCMD(['+info', '-login', username, '+quit']);
     return !output.includes('Logon state: Logged Off');
 }
 
