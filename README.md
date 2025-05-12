@@ -6,9 +6,9 @@ A GitHub Action for uploading an [app build](https://partner.steamgames.com/doc/
 
 ## How to use
 
-This action assumes you are registered as a [partner](https://partner.steamgames.com/) with Steam.
-This action assumes you have MFA enabled on your Steam account, and the Steam Mobile app installed on your phone.
-This action also assumes some secrets to be set in your repository:
+- This action assumes you are registered as a [partner](https://partner.steamgames.com/) with Steam.
+- This action assumes you have MFA enabled on your Steam account, and the Steam Mobile app installed on your phone.
+- This action also assumes some secrets to be set in your repository:
 
 > [!IMPORTANT]
 > You will be prompted to accept the login from the Steam Mobile app on your phone when the action runs the first time.
