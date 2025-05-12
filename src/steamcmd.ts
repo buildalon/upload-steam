@@ -9,22 +9,29 @@ const STEAM_CMD = process.env.STEAM_CMD;
 export async function SteamCMD(args: string[]): Promise<string> {
     let output = '';
     try {
+        core.info(`[command]steamcmd ${args.join(' ')}`);
         const exitCode = await exec('steamcmd', args, {
+            // input: input,
             listeners: {
                 stdout: (data) => {
-                    output += data.toString();
-                    if (output.includes('Cached credentials not found.')) {
+                    const chunk = data.toString();
+                    output += chunk;
+                    core.info(chunk);
+                    if (chunk.includes('Cached credentials not found.')) {
                         throw new Error('Cached credentials not found.');
                     }
                 },
                 stderr: (data) => {
-                    output += data.toString();
+                    const chunk = data.toString();
+                    output += chunk;
+                    core.error(chunk);
                     if (output.includes('Cached credentials not found.')) {
                         throw new Error('Cached credentials not found.');
                     }
                 }
             },
             ignoreReturnCode: true,
+            silent: true,
         });
         if (exitCode !== 0) {
             throw new Error(`steamcmd failed with exit code ${exitCode}`);
