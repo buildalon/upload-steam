@@ -5,8 +5,10 @@ export async function Login(): Promise<void> {
     const username = core.getInput('username', { required: true });
     const password = core.getInput('password', { required: true });
     const output = await SteamCMD([
-        `"+login ${username} ${password}"`,
-        '"+@NoPromptForPassword 1"',
+        '+login',
+        username,
+        password,
+        // '"+@NoPromptForPassword 1"',
         '+info',
         '+quit',
     ]);
@@ -23,7 +25,7 @@ export async function Login(): Promise<void> {
 export async function IsLoggedIn(): Promise<boolean> {
     const username = core.getInput('username', { required: true });
     try {
-        const output = await SteamCMD([`"+login ${username}"`, '+info', '+quit']);
+        const output = await SteamCMD([`+login`, username, '+info', '+quit']);
         if (output.includes('Logon state: Logged Off')) {
             return false;
         } else if (output.includes('Logon state: Logged On')) {

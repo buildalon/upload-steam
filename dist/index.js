@@ -28142,8 +28142,9 @@ async function Login() {
     const username = core.getInput('username', { required: true });
     const password = core.getInput('password', { required: true });
     const output = await (0, steamcmd_1.SteamCMD)([
-        `"+login ${username} ${password}"`,
-        '"+@NoPromptForPassword 1"',
+        '+login',
+        username,
+        password,
         '+info',
         '+quit',
     ]);
@@ -28161,7 +28162,7 @@ async function Login() {
 async function IsLoggedIn() {
     const username = core.getInput('username', { required: true });
     try {
-        const output = await (0, steamcmd_1.SteamCMD)([`"+login ${username}"`, '+info', '+quit']);
+        const output = await (0, steamcmd_1.SteamCMD)([`+login`, username, '+info', '+quit']);
         if (output.includes('Logon state: Logged Off')) {
             return false;
         }
