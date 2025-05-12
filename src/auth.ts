@@ -5,9 +5,7 @@ export async function Login(): Promise<void> {
     const username = core.getInput('username', { required: true });
     const password = core.getInput('password', { required: true });
     const output = await SteamCMD([
-        '+login',
-        username,
-        password,
+        `"+login ${username} ${password}"`,
         // '"+@NoPromptForPassword 1"',
         '+info',
         '+quit',

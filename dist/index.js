@@ -28142,9 +28142,7 @@ async function Login() {
     const username = core.getInput('username', { required: true });
     const password = core.getInput('password', { required: true });
     const output = await (0, steamcmd_1.SteamCMD)([
-        '+login',
-        username,
-        password,
+        `"+login ${username} ${password}"`,
         '+info',
         '+quit',
     ]);
