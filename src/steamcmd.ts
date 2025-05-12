@@ -11,8 +11,8 @@ export async function SteamCMD(args: string[]): Promise<string> {
     let errorDetected: Error | null = null;
 
     return new Promise<string>((resolve, reject) => {
-        core.info(`[command]steamcmd ${args.join(' ')}`);
-        const steamcmd = spawn('steamcmd', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+        core.info(`[command]steamcmd "${args.join(' ')}"`);
+        const steamcmd = spawn('steamcmd', [`"${args.join(' ')}"`], { stdio: ['ignore', 'pipe', 'pipe'] });
 
         steamcmd.stdout.on('data', (data: Buffer) => {
             const chunk = data.toString();

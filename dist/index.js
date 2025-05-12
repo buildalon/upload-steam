@@ -28411,8 +28411,8 @@ async function SteamCMD(args) {
     let output = '';
     let errorDetected = null;
     return new Promise((resolve, reject) => {
-        core.info(`[command]steamcmd ${args.join(' ')}`);
-        const steamcmd = (0, child_process_1.spawn)('steamcmd', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+        core.info(`[command]steamcmd "${args.join(' ')}"`);
+        const steamcmd = (0, child_process_1.spawn)('steamcmd', [`"${args.join(' ')}"`], { stdio: ['ignore', 'pipe', 'pipe'] });
         steamcmd.stdout.on('data', (data) => {
             const chunk = data.toString();
             const lines = chunk.split('\n');
