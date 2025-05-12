@@ -28344,6 +28344,7 @@ async function IsLoggedIn() {
     catch (error) {
         return false;
     }
+    return true;
 }
 async function getLoginArgs() {
     let args = [];

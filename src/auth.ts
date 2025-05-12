@@ -26,6 +26,7 @@ export async function IsLoggedIn(): Promise<boolean> {
     } catch (error) {
         return false;
     }
+    return true;
 }
 
 async function getLoginArgs(): Promise<string[]> {
