@@ -28379,7 +28379,7 @@ async function getLoginArgs() {
             args.push(password);
         }
     }
-    args.push('+@NoPromptForPassword', '1', '+info', '+quit');
+    args.push('+info', '+quit');
     return args;
 }
 function getConfigPath() {
