@@ -22,7 +22,10 @@ export async function Login(): Promise<void> {
 export async function IsLoggedIn(): Promise<boolean> {
     const username = core.getInput('username', { required: true });
     try {
-        await SteamCMD(['+login', username, '+info', '+quit']);
+        await Promise.race([
+            SteamCMD(['+login', username, '+info', '+quit']),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
+        ])
     } catch (error) {
         return false;
     }
