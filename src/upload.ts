@@ -16,17 +16,17 @@ export async function Run(): Promise<void> {
 async function getCommandArgs(): Promise<string[]> {
     let args = [];
     const username = core.getInput('username', { required: true });
-    args.push('+login', username);
+    args.push(`"+login ${username}"`);
     let appBuildPath = core.getInput('app_build');
     if (appBuildPath) {
         await fs.promises.access(appBuildPath, fs.constants.R_OK);
-        args.push('+run_app_build', appBuildPath, '+quit');
+        args.push(`"+run_app_build \"${appBuildPath}\""`, '+quit');
         return args;
     }
     let workshopItemPath = core.getInput('workshop_item');
     if (workshopItemPath) {
         await fs.promises.access(workshopItemPath, fs.constants.R_OK);
-        args.push('+workshop_build_item', workshopItemPath, '+quit');
+        args.push(`+workshop_build_item \"${workshopItemPath}\""`, '+quit');
         return args;
     }
     const appId = core.getInput('app_id', { required: true });
@@ -36,7 +36,7 @@ async function getCommandArgs(): Promise<string[]> {
     const workshopItemId = core.getInput('workshop_item_id');
     if (workshopItemId) {
         workshopItemPath = await generateWorkshopItemVdf(appId, workshopItemId, contentRoot, description);
-        args.push('+workshop_build_item', workshopItemPath, '+quit');
+        args.push(`"+workshop_build_item \"${workshopItemPath}\""`, '+quit');
         return args;
     }
     const set_live = core.getInput('set_live');
@@ -56,7 +56,7 @@ async function getCommandArgs(): Promise<string[]> {
         depots_list = depots.split('\n');
     }
     appBuildPath = await generateBuildVdf(appId, contentRoot, description, set_live, depot_file_exclusions_list, install_scripts_list, depots_list);
-    args.push('+run_app_build', appBuildPath, '+quit');
+    args.push(`"+run_app_build \"${appBuildPath}\""`, '+quit');
     return args;
 }
 
