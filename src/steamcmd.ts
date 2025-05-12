@@ -21,7 +21,7 @@ export async function SteamCMD(args: string[]): Promise<string> {
             ignoreReturnCode: true,
         });
         if (exitCode !== 0) {
-            core.setFailed(`steamcmd failed with exit code ${exitCode}`);
+            throw new Error(`steamcmd failed with exit code ${exitCode}`);
         }
     } catch (error) {
         const logFile = getErrorLogPath();

@@ -28338,8 +28338,13 @@ async function Login() {
 }
 async function IsLoggedIn() {
     const username = core.getInput('username', { required: true });
-    const output = await (0, steamcmd_1.SteamCMD)(['+info', '+login', username, '+quit']);
-    return !output.includes('Logon state: Logged Off');
+    try {
+        const output = await (0, steamcmd_1.SteamCMD)(['+login', username, '+info', '+quit']);
+        return !output.includes('Logon state: Logged Off');
+    }
+    catch (error) {
+        return false;
+    }
 }
 async function getLoginArgs() {
     let args = [];
@@ -28417,7 +28422,7 @@ async function SteamCMD(args) {
             ignoreReturnCode: true,
         });
         if (exitCode !== 0) {
-            core.setFailed(`steamcmd failed with exit code ${exitCode}`);
+            throw new Error(`steamcmd failed with exit code ${exitCode}`);
         }
     }
     catch (error) {
