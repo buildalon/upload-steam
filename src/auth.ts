@@ -22,8 +22,7 @@ export async function Login(): Promise<void> {
 export async function IsLoggedIn(): Promise<boolean> {
     const username = core.getInput('username', { required: true });
     try {
-        const output = await SteamCMD(['+login', username, '+info', '+quit']);
-        return !output.includes('Logon state: Logged Off');
+        await SteamCMD(['+login', username, '+quit']);
     } catch (error) {
         return false;
     }

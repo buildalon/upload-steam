@@ -28339,8 +28339,7 @@ async function Login() {
 async function IsLoggedIn() {
     const username = core.getInput('username', { required: true });
     try {
-        const output = await (0, steamcmd_1.SteamCMD)(['+login', username, '+info', '+quit']);
-        return !output.includes('Logon state: Logged Off');
+        await (0, steamcmd_1.SteamCMD)(['+login', username, '+quit']);
     }
     catch (error) {
         return false;
@@ -28414,9 +28413,15 @@ async function SteamCMD(args) {
             listeners: {
                 stdout: (data) => {
                     output += data.toString();
+                    if (output.includes('Cached credentials not found.')) {
+                        throw new Error('Cached credentials not found.');
+                    }
                 },
                 stderr: (data) => {
                     output += data.toString();
+                    if (output.includes('Cached credentials not found.')) {
+                        throw new Error('Cached credentials not found.');
+                    }
                 }
             },
             ignoreReturnCode: true,

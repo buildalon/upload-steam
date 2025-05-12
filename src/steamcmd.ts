@@ -13,9 +13,15 @@ export async function SteamCMD(args: string[]): Promise<string> {
             listeners: {
                 stdout: (data) => {
                     output += data.toString();
+                    if (output.includes('Cached credentials not found.')) {
+                        throw new Error('Cached credentials not found.');
+                    }
                 },
                 stderr: (data) => {
                     output += data.toString();
+                    if (output.includes('Cached credentials not found.')) {
+                        throw new Error('Cached credentials not found.');
+                    }
                 }
             },
             ignoreReturnCode: true,
