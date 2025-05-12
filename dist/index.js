@@ -28413,22 +28413,26 @@ const STEAM_CMD = process.env.STEAM_CMD;
 async function SteamCMD(args) {
     let output = '';
     try {
+        core.info(`[command]steamcmd ${args.join(' ')}`);
         const exitCode = await (0, exec_1.exec)('steamcmd', args, {
             listeners: {
                 stdline: (line) => {
+                    core.info(line);
                     output += line;
                     if (line.includes('Cached credentials not found.')) {
                         throw new Error('Cached credentials not found.');
                     }
                 },
                 errline: (line) => {
-                    output += `\x1b[31m${line}\x1b[0m`;
-                    if (output.includes('Cached credentials not found.')) {
+                    core.error(line);
+                    output += line;
+                    if (line.includes('Cached credentials not found.')) {
                         throw new Error('Cached credentials not found.');
                     }
                 }
             },
             ignoreReturnCode: true,
+            silent: true,
         });
         if (exitCode !== 0) {
             throw new Error(`steamcmd failed with exit code ${exitCode}`);
