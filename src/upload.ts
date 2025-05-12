@@ -16,17 +16,17 @@ export async function Run(): Promise<void> {
 async function getCommandArgs(): Promise<string[]> {
     let args = [];
     const username = core.getInput('username', { required: true });
-    args.push(`"+login ${username}"`);
+    args.push(`+login`, username);
     let appBuildPath = core.getInput('app_build');
     if (appBuildPath) {
         await fs.promises.access(appBuildPath, fs.constants.R_OK);
-        args.push(`"+run_app_build \"${appBuildPath}\""`, '+quit');
+        args.push(`+run_app_build`, appBuildPath, '+quit');
         return args;
     }
     let workshopItemPath = core.getInput('workshop_item');
     if (workshopItemPath) {
         await fs.promises.access(workshopItemPath, fs.constants.R_OK);
-        args.push(`+workshop_build_item \"${workshopItemPath}\""`, '+quit');
+        args.push(`+workshop_build_item`, workshopItemPath, '+quit');
         return args;
     }
     const appId = core.getInput('app_id', { required: true });
@@ -36,7 +36,7 @@ async function getCommandArgs(): Promise<string[]> {
     const workshopItemId = core.getInput('workshop_item_id');
     if (workshopItemId) {
         workshopItemPath = await generateWorkshopItemVdf(appId, workshopItemId, contentRoot, description);
-        args.push(`"+workshop_build_item \"${workshopItemPath}\""`, '+quit');
+        args.push(`+workshop_build_item`, workshopItemPath, '+quit');
         return args;
     }
     const set_live = core.getInput('set_live');
@@ -56,14 +56,14 @@ async function getCommandArgs(): Promise<string[]> {
         depots_list = depots.split('\n');
     }
     appBuildPath = await generateBuildVdf(appId, contentRoot, description, set_live, depot_file_exclusions_list, install_scripts_list, depots_list);
-    args.push(`"+run_app_build \"${appBuildPath}\""`, '+quit');
+    args.push(`+run_app_build`, appBuildPath, '+quit');
     return args;
 }
 
 async function generateWorkshopItemVdf(appId: string, workshopItemId: string, contentFolder: string, description: string): Promise<string> {
     await verify_temp_dir();
     const workshopItemPath = path.join(STEAM_TEMP, 'workshop_item.vdf');
-    let workshopItem = `"workshopitem"\n{\n\t"appid" "${appId}"\n\t"publishedfileid" "${workshopItemId}"\n\t"contentfolder" "${contentFolder}"\n`;
+    let workshopItem = `"workshopitem"\n{ \n\t"appid" "${appId}"\n\t"publishedfileid" "${workshopItemId}"\n\t"contentfolder" "${contentFolder}"\n`;
     if (description && description !== '') {
         workshopItem += `\t"description" "${description}"\n`;
     }
@@ -77,7 +77,7 @@ async function generateWorkshopItemVdf(appId: string, workshopItemId: string, co
 async function generateBuildVdf(appId: string, contentRoot: string, description: string, set_live: string, depot_file_exclusions_list: string[], install_scripts_list: string[], depots_list: string[]): Promise<string> {
     await verify_temp_dir();
     const appBuildPath = path.join(STEAM_TEMP, 'app_build.vdf');
-    let appBuild = `"AppBuild"\n{\n`;
+    let appBuild = `"AppBuild"\n{ \n`;
     appBuild += `\t"AppID" "${appId}"\n`;
     appBuild += `\t"ContentRoot" "${contentRoot}"\n`;
     appBuild += `\t"BuildOutput" "${BUILD_OUTPUT}"\n`;
@@ -92,19 +92,22 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
         appBuild += `\t"SetLive" "${set_live}"\n`;
     }
     if (depots_list) {
-        appBuild += `\t"Depots"\n\t{\n`;
+        appBuild += `\t"Depots"\n\t{ \n`;
         let depotIndex = 1;
         depots_list.forEach(depot => {
             appBuild += `\t\t"${appId + depotIndex}" "${depot}"\n`;
             depotIndex++;
         });
-        appBuild += `\t}\n`;
+        appBuild += `\t} \n`;
     } else {
         const depotId = parseInt(appId) + 1;
-        appBuild += `\t"Depots"\n\t{\n`;
+        appBuild += `\t"Depots"\n\t{
+    \n`;
         appBuild += `\t\t"${depotId}"\n`;
-        appBuild += `\t\t{\n`;
-        appBuild += `\t\t\t"FileMapping"\n\t\t{\n`;
+        appBuild += `\t\t{
+        \n`;
+        appBuild += `\t\t\t"FileMapping"\n\t\t{
+            \n`;
         appBuild += `\t\t\t\t"LocalPath" "*" // all files from content root folder\n`;
         appBuild += `\t\t\t\t"DepotPath" "." // mapped into the root of the depot\n`;
         appBuild += `\t\t\t\t"recursive" "1" // include all subfolders\n`;

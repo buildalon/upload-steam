@@ -4,9 +4,11 @@ import core = require('@actions/core');
 export async function Login(): Promise<void> {
     const username = core.getInput('username', { required: true });
     const password = core.getInput('password', { required: true });
+    core.info(`Please confirm the login in the Steam Mobile app on your phone!`);
     const output = await SteamCMD([
-        `"+login ${username} ${password}"`,
-        // '"+@NoPromptForPassword 1"',
+        '+login',
+        username,
+        password,
         '+info',
         '+quit',
     ]);
