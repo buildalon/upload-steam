@@ -28413,26 +28413,18 @@ const STEAM_CMD = process.env.STEAM_CMD;
 async function SteamCMD(args) {
     let output = '';
     try {
-        core.info(`[command]steamcmd ${args.join(' ')}`);
         const exitCode = await (0, exec_1.exec)('steamcmd', args, {
             listeners: {
                 stdline: (line) => {
-                    core.info(line);
-                    output += line;
-                    if (line.includes('Cached credentials not found.')) {
-                        throw new Error('Cached credentials not found.');
-                    }
+                    output += `${line}\n`;
+                    checkError(line);
                 },
                 errline: (line) => {
-                    core.error(line);
-                    output += line;
-                    if (line.includes('Cached credentials not found.')) {
-                        throw new Error('Cached credentials not found.');
-                    }
+                    output += `${line}\n`;
+                    checkError(line);
                 }
             },
             ignoreReturnCode: true,
-            silent: true,
         });
         if (exitCode !== 0) {
             throw new Error(`steamcmd failed with exit code ${exitCode}`);
@@ -28467,6 +28459,14 @@ function getErrorLogPath() {
         root = STEAM_CMD;
     }
     return path.join(root, 'logs', 'stderr.txt');
+}
+function checkError(line) {
+    if (line.includes('Cached credentials not found.')) {
+        throw new Error('Cached credentials not found.');
+    }
+    if (line.includes('CWorkThreadPool::~CWorkThreadPool: work processing queue not empty')) {
+        throw new Error(`SteamCMD is still running or is stuck and hasn't fully shut down!`);
+    }
 }
 
 
