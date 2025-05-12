@@ -23,8 +23,8 @@ export async function SteamCMD(args: string[]): Promise<string> {
                     output += `${line}\n`;
                     try {
                         checkError(line);
-                    } catch (err) {
-                        errorDetected = err as Error;
+                    } catch (error) {
+                        errorDetected = error as Error;
                         steamcmd.kill();
                     }
                 }
@@ -40,8 +40,8 @@ export async function SteamCMD(args: string[]): Promise<string> {
                     output += `${line}\n`;
                     try {
                         checkError(line);
-                    } catch (err) {
-                        errorDetected = err as Error;
+                    } catch (error) {
+                        errorDetected = error as Error;
                         steamcmd.kill();
                     }
                 }
