@@ -11,16 +11,14 @@ export async function SteamCMD(args: string[]): Promise<string> {
     try {
         const exitCode = await exec('steamcmd', args, {
             listeners: {
-                stdout: (data) => {
-                    const chunk = data.toString();
-                    output += chunk;
-                    if (chunk.includes('Cached credentials not found.')) {
+                stdline: (line) => {
+                    output += line;
+                    if (line.includes('Cached credentials not found.')) {
                         throw new Error('Cached credentials not found.');
                     }
                 },
-                stderr: (data) => {
-                    const chunk = data.toString();
-                    output += chunk;
+                errline: (line) => {
+                    output += `\x1b[31m${line}\x1b[0m`;
                     if (output.includes('Cached credentials not found.')) {
                         throw new Error('Cached credentials not found.');
                     }
