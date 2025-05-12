@@ -22,7 +22,7 @@ export async function Login(): Promise<void> {
 export async function IsLoggedIn(): Promise<boolean> {
     const username = core.getInput('username', { required: true });
     try {
-        await SteamCMD(['+login', username, '+quit']);
+        await SteamCMD(['+login', username, '+info', '+quit']);
     } catch (error) {
         return false;
     }

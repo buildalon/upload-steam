@@ -28339,7 +28339,7 @@ async function Login() {
 async function IsLoggedIn() {
     const username = core.getInput('username', { required: true });
     try {
-        await (0, steamcmd_1.SteamCMD)(['+login', username, '+quit']);
+        await (0, steamcmd_1.SteamCMD)(['+login', username, '+info', '+quit']);
     }
     catch (error) {
         return false;
