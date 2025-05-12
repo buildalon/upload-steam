@@ -9,22 +9,22 @@ const STEAM_CMD = process.env.STEAM_CMD;
 export async function SteamCMD(args: string[]): Promise<string> {
     let output = '';
     try {
-        // core.info(`[command]steamcmd ${args.join(' ')}`);
+        core.info(`[command]steamcmd ${args.join(' ')}`);
         const exitCode = await exec('steamcmd', args, {
             listeners: {
                 stdline: (line) => {
-                    // core.info(line);
+                    core.info(line);
                     output += `${line}\n`;
                     checkError(line);
                 },
                 errline: (line) => {
-                    // core.error(line);
+                    core.error(line);
                     output += `${line}\n`;
                     checkError(line);
                 }
             },
             ignoreReturnCode: true,
-            // silent: true,
+            silent: true,
         });
         if (exitCode !== 0) {
             throw new Error(`steamcmd failed with exit code ${exitCode}`);

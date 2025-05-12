@@ -28340,7 +28340,7 @@ async function IsLoggedIn() {
     const username = core.getInput('username', { required: true });
     try {
         await Promise.race([
-            (0, steamcmd_1.SteamCMD)(['+login', username, '+info', '+quit']),
+            (0, steamcmd_1.SteamCMD)(['+login', username, '+quit']),
             new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
         ]);
     }
@@ -28382,7 +28382,7 @@ async function getLoginArgs() {
             args.push(password);
         }
     }
-    args.push('+@NoPromptForPassword', '1', '+info', '+quit');
+    args.push('+@NoPromptForPassword', '1', '+quit');
     return args;
 }
 function getConfigPath() {
@@ -28413,18 +28413,22 @@ const STEAM_CMD = process.env.STEAM_CMD;
 async function SteamCMD(args) {
     let output = '';
     try {
+        core.info(`[command]steamcmd ${args.join(' ')}`);
         const exitCode = await (0, exec_1.exec)('steamcmd', args, {
             listeners: {
                 stdline: (line) => {
+                    core.info(line);
                     output += `${line}\n`;
                     checkError(line);
                 },
                 errline: (line) => {
+                    core.error(line);
                     output += `${line}\n`;
                     checkError(line);
                 }
             },
             ignoreReturnCode: true,
+            silent: true,
         });
         if (exitCode !== 0) {
             throw new Error(`steamcmd failed with exit code ${exitCode}`);

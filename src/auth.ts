@@ -23,7 +23,7 @@ export async function IsLoggedIn(): Promise<boolean> {
     const username = core.getInput('username', { required: true });
     try {
         await Promise.race([
-            SteamCMD(['+login', username, '+info', '+quit']),
+            SteamCMD(['+login', username, '+quit']),
             new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
         ])
     } catch (error) {
@@ -63,7 +63,7 @@ async function getLoginArgs(): Promise<string[]> {
             args.push(password);
         }
     }
-    args.push('+@NoPromptForPassword', '1', '+info', '+quit');
+    args.push('+@NoPromptForPassword', '1', '+quit');
     return args;
 }
 
