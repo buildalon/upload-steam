@@ -28149,18 +28149,25 @@ async function Login() {
     ]);
     if (output.includes('Logon state: Logged On')) {
         core.info('Logged in successfully!');
+        return;
     }
     else if (output.includes('Logon state: Logged Off')) {
-        core.setFailed('Login failed!');
+        throw new Error('Login failed!');
     }
     else {
-        core.setFailed('Login failed! Unknown error.');
+        throw new Error('Login failed! Unknown error.');
     }
 }
 async function IsLoggedIn() {
     const username = core.getInput('username', { required: true });
     try {
-        await (0, steamcmd_1.SteamCMD)([`"+login ${username}"`, '+info', '+quit']);
+        const output = await (0, steamcmd_1.SteamCMD)([`"+login ${username}"`, '+info', '+quit']);
+        if (output.includes('Logon state: Logged Off')) {
+            return false;
+        }
+        else if (output.includes('Logon state: Logged On')) {
+            return true;
+        }
     }
     catch (error) {
         return false;
