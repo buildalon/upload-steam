@@ -28339,10 +28339,7 @@ async function Login() {
 async function IsLoggedIn() {
     const username = core.getInput('username', { required: true });
     try {
-        await Promise.race([
-            (0, steamcmd_1.SteamCMD)(['+login', username, '+quit']),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
-        ]);
+        await (0, steamcmd_1.SteamCMD)(['+login', username, '+info', '+quit']);
     }
     catch (error) {
         return false;
@@ -28382,7 +28379,7 @@ async function getLoginArgs() {
             args.push(password);
         }
     }
-    args.push('+@NoPromptForPassword', '1', '+quit');
+    args.push('+@NoPromptForPassword', '1', '+info', '+quit');
     return args;
 }
 function getConfigPath() {
@@ -28405,57 +28402,89 @@ function getSSFNPath(ssfnName) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SteamCMD = SteamCMD;
 const core = __nccwpck_require__(2186);
-const exec_1 = __nccwpck_require__(1514);
 const path = __nccwpck_require__(1017);
 const fs = __nccwpck_require__(7147);
+const child_process_1 = __nccwpck_require__(2081);
 const STEAM_DIR = process.env.STEAM_DIR;
 const STEAM_CMD = process.env.STEAM_CMD;
 async function SteamCMD(args) {
     let output = '';
-    try {
+    let errorDetected = null;
+    return new Promise((resolve, reject) => {
         core.info(`[command]steamcmd ${args.join(' ')}`);
-        const exitCode = await (0, exec_1.exec)('steamcmd', args, {
-            listeners: {
-                stdline: (line) => {
+        const steamcmd = (0, child_process_1.spawn)('steamcmd', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+        steamcmd.stdout.on('data', (data) => {
+            const chunk = data.toString();
+            const lines = chunk.split('\n');
+            for (const line of lines) {
+                if (line.trim().length > 0) {
                     core.info(line);
                     output += `${line}\n`;
-                    checkError(line);
-                },
-                errline: (line) => {
+                    try {
+                        checkError(line);
+                    }
+                    catch (err) {
+                        errorDetected = err;
+                        steamcmd.kill();
+                    }
+                }
+            }
+        });
+        steamcmd.stderr.on('data', (data) => {
+            const chunk = data.toString();
+            const lines = chunk.split('\n');
+            for (const line of lines) {
+                if (line.trim().length > 0) {
                     core.error(line);
                     output += `${line}\n`;
-                    checkError(line);
+                    try {
+                        checkError(line);
+                    }
+                    catch (err) {
+                        errorDetected = err;
+                        steamcmd.kill();
+                    }
                 }
-            },
-            ignoreReturnCode: true,
-            silent: true,
+            }
         });
-        if (exitCode !== 0) {
-            throw new Error(`steamcmd failed with exit code ${exitCode}`);
-        }
-    }
-    catch (error) {
-        const logFile = getErrorLogPath();
-        core.debug(`Printing error log: ${logFile}`);
+        steamcmd.on('close', async (code) => {
+            if (errorDetected) {
+                await printErrorLog();
+                reject(errorDetected);
+            }
+            else if (code !== 0) {
+                await printErrorLog();
+                reject(new Error(`steamcmd failed with exit code ${code}`));
+            }
+            else {
+                resolve(output);
+            }
+        });
+        steamcmd.on('error', async (error) => {
+            await printErrorLog();
+            reject(error);
+        });
+    });
+}
+async function printErrorLog() {
+    const logFile = getErrorLogPath();
+    core.debug(`Printing error log: ${logFile}`);
+    try {
+        const fileHandle = await fs.promises.open(logFile, 'r');
         try {
-            const fileHandle = await fs.promises.open(logFile, 'r');
-            try {
-                const log = await fs.promises.readFile(logFile, 'utf8');
-                core.startGroup(logFile);
-                core.info(log);
-                core.endGroup();
-            }
-            catch (error) {
-            }
-            finally {
-                fileHandle.close();
-            }
+            const log = await fs.promises.readFile(logFile, 'utf8');
+            core.startGroup(logFile);
+            core.info(log);
+            core.endGroup();
         }
-        catch (error) {
+        catch (_a) {
         }
-        throw error;
+        finally {
+            fileHandle.close();
+        }
     }
-    return output;
+    catch (_b) {
+    }
 }
 function getErrorLogPath() {
     let root = STEAM_DIR;
