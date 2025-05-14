@@ -110,8 +110,6 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
         appBuild += `\t\t\t\t"recursive" "1" // include all subfolders\n`;
         appBuild += `\t\t\t}\n`;
         const fileExclusions: string[] = ['*.pdb'];
-        // *_BurstDebugInformation_DoNotShip*
-        // *_BackUpThisFolder_ButDontShipItWithYourGame*
         const burstDebugDir = await getDirectoryFromGlob(path.join(contentRoot, '*_BurstDebugInformation_DoNotShip*'));
         if (burstDebugDir && !fileExclusions.includes(burstDebugDir)) {
             fileExclusions.push(burstDebugDir);
