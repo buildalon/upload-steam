@@ -101,13 +101,10 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
         appBuild += `\t} \n`;
     } else {
         const depotId = parseInt(appId) + 1;
-        appBuild += `\t"Depots"\n\t{
-    \n`;
+        appBuild += `\t"Depots"\n\t{\n`;
         appBuild += `\t\t"${depotId}"\n`;
-        appBuild += `\t\t{
-        \n`;
-        appBuild += `\t\t\t"FileMapping"\n\t\t{
-            \n`;
+        appBuild += `\t\t{\n`;
+        appBuild += `\t\t\t"FileMapping"\n\t\t\t{\n`;
         appBuild += `\t\t\t\t"LocalPath" "*" // all files from content root folder\n`;
         appBuild += `\t\t\t\t"DepotPath" "." // mapped into the root of the depot\n`;
         appBuild += `\t\t\t\t"recursive" "1" // include all subfolders\n`;
