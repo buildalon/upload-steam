@@ -145,10 +145,15 @@ async function generateBuildVdf(appId: string, contentRoot: string, description:
 
 async function verify_temp_dir(): Promise<void> {
     try {
-        await fs.promises.access(BUILD_OUTPUT, fs.constants.R_OK);
+        const stat = await fs.promises.stat(BUILD_OUTPUT);
+        if (!stat.isDirectory()) {
+            throw new Error(`Path ${BUILD_OUTPUT} is not a directory`);
+        }
     } catch (error) {
         await fs.promises.mkdir(BUILD_OUTPUT);
     }
+    await fs.promises.access(BUILD_OUTPUT, fs.constants.R_OK | fs.constants.W_OK);
+    core.info(`Steamworks temp directory is ready: ${BUILD_OUTPUT}`);
 }
 
 async function getDirectoryFromGlob(globPattern: string): Promise<string> {
