@@ -28259,6 +28259,7 @@ async function printErrorLog() {
     const logFile = getErrorLogPath();
     core.debug(`Printing error log: ${logFile}`);
     try {
+        await fs.promises.access(logFile, fs.constants.R_OK);
         const fileHandle = await fs.promises.open(logFile, 'r');
         try {
             const log = await fs.promises.readFile(logFile, 'utf8');
