@@ -8,23 +8,8 @@ inputs:
     description: 'A steamworks build account username.'
     required: true
   password:
-    description: 'Steam password. Required if `config` is not provided.'
-    required: false
-  totp:
-    description: 'A temporary one time pass code (totp) from SteamGuard. Required if `shared_secret` and `config` are not provided.'
-    required: false
-  shared_secret:
-    description: 'The shared secret for SteamGuard''s two-factor authentication. Required if `totp` and `config` are not provided.'
-    required: false
-  config:
-    description: 'Steam config.vdf file contents as base64 encoded string. Required if `password`, `totp` and `shared_secret` are not provided.'
-    required: false
-  ssfn:
-    description: 'Steam SSFN file encoded as base64 string. Optional if `config` is provided.'
-    required: false
-  ssfn_name:
-    description: 'Name of the encoded SSFN file. Required if `ssfn` is provided.'
-    required: false
+    description: 'Steam password.'
+    required: true
   app_id:
     description: 'Steam App ID. Required if `app_build` or `workshop_item` are not provided.'
     required: false
