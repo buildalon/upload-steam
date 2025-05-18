@@ -25,7 +25,7 @@
     "@actions/glob": "^0.5.0"
   },
   "devDependencies": {
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.15.18",
     "@types/steam-totp": "^2.1.2",
     "@vercel/ncc": "^0.34.0",
     "shx": "^0.3.4",

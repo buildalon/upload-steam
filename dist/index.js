@@ -28189,6 +28189,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SteamCMD = SteamCMD;
 const core = __nccwpck_require__(2186);
 const path = __nccwpck_require__(1017);
+const util = __nccwpck_require__(7261);
 const fs = __nccwpck_require__(7147);
 const child_process_1 = __nccwpck_require__(2081);
 const STEAM_DIR = process.env.STEAM_DIR;
@@ -28203,11 +28204,12 @@ async function SteamCMD(args) {
             const chunk = data.toString();
             const lines = chunk.split('\n');
             for (const line of lines) {
-                if (line.trim().length > 0) {
-                    core.info(line);
-                    output += `${line}\n`;
+                const cleanLine = util.stripVTControlCharacters(line);
+                if (cleanLine.trim().length > 0) {
+                    core.info(cleanLine);
+                    output += `${cleanLine}\n`;
                     try {
-                        checkError(line);
+                        checkError(cleanLine);
                     }
                     catch (error) {
                         errorDetected = error;
@@ -28220,11 +28222,12 @@ async function SteamCMD(args) {
             const chunk = data.toString();
             const lines = chunk.split('\n');
             for (const line of lines) {
-                if (line.trim().length > 0) {
-                    core.error(line);
-                    output += `${line}\n`;
+                const cleanLine = util.stripVTControlCharacters(line);
+                if (cleanLine.trim().length > 0) {
+                    core.error(cleanLine);
+                    output += `${cleanLine}\n`;
                     try {
-                        checkError(line);
+                        checkError(cleanLine);
                     }
                     catch (error) {
                         errorDetected = error;

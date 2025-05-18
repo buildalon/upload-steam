@@ -1,5 +1,6 @@
 import core = require('@actions/core');
 import path = require('path');
+import util = require('node:util');
 import fs = require('fs');
 import { spawn } from 'child_process';
 
@@ -18,11 +19,12 @@ export async function SteamCMD(args: string[]): Promise<string> {
             const chunk = data.toString();
             const lines = chunk.split('\n');
             for (const line of lines) {
-                if (line.trim().length > 0) {
-                    core.info(line);
-                    output += `${line}\n`;
+                const cleanLine = util.stripVTControlCharacters(line);
+                if (cleanLine.trim().length > 0) {
+                    core.info(cleanLine);
+                    output += `${cleanLine}\n`;
                     try {
-                        checkError(line);
+                        checkError(cleanLine);
                     } catch (error) {
                         errorDetected = error as Error;
                         steamcmd.kill();
@@ -35,11 +37,12 @@ export async function SteamCMD(args: string[]): Promise<string> {
             const chunk = data.toString();
             const lines = chunk.split('\n');
             for (const line of lines) {
-                if (line.trim().length > 0) {
-                    core.error(line);
-                    output += `${line}\n`;
+                const cleanLine = util.stripVTControlCharacters(line);
+                if (cleanLine.trim().length > 0) {
+                    core.error(cleanLine);
+                    output += `${cleanLine}\n`;
                     try {
-                        checkError(line);
+                        checkError(cleanLine);
                     } catch (error) {
                         errorDetected = error as Error;
                         steamcmd.kill();
