@@ -55,7 +55,7 @@ export async function SteamCMD(args: string[]): Promise<string> {
             if (errorDetected) {
                 await printErrorLog();
                 reject(errorDetected);
-            } else if (code !== 0) {
+            } else if (code !== 0 && code !== 42) {
                 await printErrorLog();
                 reject(new Error(`steamcmd failed with exit code ${code}`));
             } else {
