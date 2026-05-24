@@ -1,6 +1,6 @@
 {
   "name": "upload-steam",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "A GitHub Action for uploading an app build or workshop item to Steam.",
   "author": "buildalon",
   "repository": {
@@ -22,18 +22,22 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
-    "@actions/glob": "^0.5.0"
+    "@actions/glob": "^0.5.1",
+    "steam-totp": "^2.1.2"
   },
   "devDependencies": {
-    "@types/node": "^22.15.18",
+    "@types/node": "^24.12.4",
     "@types/steam-totp": "^2.1.2",
     "@vercel/ncc": "^0.34.0",
-    "shx": "^0.3.4",
-    "typescript": "^5.8.3"
+    "shx": "^0.4.0",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "build": "npm run clean && npm run bundle",
     "bundle": "ncc build src/index.ts -o dist --source-map --license licenses.txt",
     "clean": "npm install && shx rm -rf dist/ out/ node_modules/ && npm ci"
+  },
+  "overrides": {
+    "@actions/http-client": "^3.0.2"
   }
 }
