@@ -1,6 +1,6 @@
 {
   "name": "upload-steam",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A GitHub Action for uploading an app build or workshop item to Steam.",
   "author": "buildalon",
   "repository": {
@@ -26,7 +26,7 @@
     "steam-totp": "^2.1.2"
   },
   "devDependencies": {
-    "@types/node": "^24.12.4",
+    "@types/node": "^24.13.3",
     "@types/steam-totp": "^2.1.2",
     "@vercel/ncc": "^0.34.0",
     "shx": "^0.4.0",
