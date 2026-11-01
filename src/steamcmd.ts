@@ -1,7 +1,7 @@
-import core = require('@actions/core');
-import path = require('path');
-import util = require('node:util');
-import fs = require('fs');
+import * as core from '@actions/core';
+import * as path from 'path';
+import * as util from 'node:util';
+import * as fs from 'fs';
 import { spawn } from 'child_process';
 
 const STEAM_DIR = process.env.STEAM_DIR;

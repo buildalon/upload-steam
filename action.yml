@@ -40,9 +40,9 @@ inputs:
   workshop_item:
     description: 'Optional, The path to a predefined workshop_item.vdf file. Overrides all other set options.'
     required: false
-runs:
-  using: 'node24'
-  main: 'dist/index.js'
 outputs:
   manifest:
     description: 'Path to the generated manifest.vdf file.'
+runs:
+  using: 'node24'
+  main: 'dist/index.js'

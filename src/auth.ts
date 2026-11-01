@@ -1,5 +1,5 @@
 import { SteamCMD } from './steamcmd';
-import core = require('@actions/core');
+import * as core from '@actions/core';
 
 export async function Login(): Promise<void> {
     const username = core.getInput('username', { required: true });

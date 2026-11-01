@@ -1,6 +1,6 @@
-import core = require('@actions/core');
-import upload = require('./upload');
-import auth = require('./auth');
+import * as core from '@actions/core';
+import * as upload from './upload';
+import * as auth from './auth';
 
 const main = async () => {
     try {
