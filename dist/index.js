@@ -35397,7 +35397,7 @@ async function generateBuildVdf(appId, contentRoot, description, set_live, depot
         appBuild += `\t"Depots"\n\t{ \n`;
         let depotIndex = 1;
         depots_list.forEach(depot => {
-            appBuild += `\t\t"${appId + depotIndex}" "${depot}"\n`;
+            appBuild += `\t\t"${parseInt(appId) + depotIndex}" "${depot}"\n`;
             depotIndex++;
         });
         appBuild += `\t} \n`;

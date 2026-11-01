@@ -17,7 +17,7 @@ inputs:
     description: 'Steam Workshop item ID. Required for workshop item uploads and if `workshop_item` is not provided.'
     required: false
   description:
-    description: 'Either the build description or workshop item changelog. If an `app_build` or `workshop_item` file is provided, this will be ignored.'
+    description: 'The build description or workshop item changelog. If an `app_build` or `workshop_item` file is provided, this will be ignored.'
     required: false
   content_root:
     description: 'The root folder of your game files or workshop item files, can be an absolute or relative path. If an `app_build` or `workshop_item` file is provided, this will be ignored. Defaults to `github.workspace`.'
@@ -26,7 +26,7 @@ inputs:
     description: 'Beta branch name to automatically set live after successful build, none if empty. Note that the default branch can not be set live automatically. That must be done through the App Admin panel. If an `app_build` file is provided, this will be ignored.'
     required: false
   depot_file_exclusions:
-    description: 'A list of paths to exclude from the depot that will excluded mapped files again and can also contain wildcards like `?` or `*`. If `app_build` or `depots` are provided, this will be ignored.'
+    description: 'A list of paths to exclude from the depot. Excludes files that were already mapped, and can contain wildcards like `?` or `*`. If `app_build` or `depots` are provided, this will be ignored.'
     required: false
   install_scripts:
     description: 'The path(s) to a predefined install_script.vdf file(s). If `app_build` or `depots` are provided, this will be ignored.'
@@ -38,7 +38,7 @@ inputs:
     description: 'The path to a predefined app_build.vdf file. Overrides all other set options.'
     required: false
   workshop_item:
-    description: 'Optional, The path to a predefined workshop_item.vdf file. Overrides all other set options.'
+    description: 'The path to a predefined workshop_item.vdf file. Overrides all other set options.'
     required: false
 outputs:
   manifest:
